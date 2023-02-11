@@ -4,6 +4,8 @@ import agent.*;
 import vacworld.*;
 
 import java.util.Random;
+import java.util.Stack;
+import java.util.ArrayList;
 
 public class VacAgent extends Agent {
 
@@ -11,7 +13,6 @@ public class VacAgent extends Agent {
     boolean seeObst = false;
     boolean shutDown = false;
 
-    
     int[][] map = new int[19][19];
     int VISITED = 1;
     int OBSTACLE = 2;
@@ -19,7 +20,7 @@ public class VacAgent extends Agent {
     int X = 10;
     int Y = 10;
     int direct = Direction.NORTH;
-    int cellLimit = 3;
+    int cellLimit = 10;
 
     // VacuumState state = new VacuumState(map);
 
@@ -37,8 +38,8 @@ public class VacAgent extends Agent {
         // int Y = state.getAgentY();
         // int direct = state.getAgentDir();
 
-        System.out.println("X: " + X);
-        System.out.println("Y: " + Y);
+        // System.out.println("X: " + X);
+        // System.out.println("Y: " + Y);
 
         if(agent.seeObstacle()){
             seeObst = agent.seeObstacle();
@@ -68,12 +69,12 @@ public class VacAgent extends Agent {
             }
         }
 
-        for(int i = 0; i < map.length; i++){
-            for(int j = 0; j < map[i].length; j++){
-                System.out.print(map[i][j] + " ");
-            }
-            System.out.println("");
-        }
+        // for(int i = 0; i < map.length; i++){
+        //     for(int j = 0; j < map[i].length; j++){
+        //         System.out.print(map[i][j] + " ");
+        //     }
+        //     System.out.println("");
+        // }
     }
 
     public Action selectAction(){
@@ -97,6 +98,7 @@ public class VacAgent extends Agent {
                     default:
                         direct = Direction.SOUTH;
                 }
+                // history.push("left");
                 return new TurnLeft();
             } else {
                 switch(direct){
@@ -112,10 +114,12 @@ public class VacAgent extends Agent {
                     default:
                         direct = Direction.NORTH;
                 }
+                // history.push("right");
                 return new TurnRight();
             }
         } else if(seeDirt){
             seeDirt = false;
+            // history.push("dirt");
             return new SuckDirt();
         } else if(shutDown){
             return new ShutOff();
@@ -134,6 +138,7 @@ public class VacAgent extends Agent {
                     Y-=1;
                     break;
             }
+            // history.push("forward");
             return new GoForward();
         }
     }
