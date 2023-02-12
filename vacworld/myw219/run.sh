@@ -1,6 +1,6 @@
 #! /bin/bash/
 
-for i in {1..200}
+for i in {1..100}
 do
     java vacworld/VacuumWorld.java -batch -rand $i myw219 | grep SCORE | awk '{print$3}' #> ./myw219/nums.txt 
 done
