@@ -14,15 +14,16 @@ public class VacAgent extends Agent {
 
     // Stack<String> history = new Stack<>();
 
-    int[][] map = new int[19][19];
+    int[][] map = new int[19][19]; // internal map of what the vacuum believes is on the board
     int VISITED = 1;
     int OBSTACLE = 99;
     int DIRT = 11;
     int X = 9;
     int Y = 9;
-    int direct = Direction.NORTH;
-    int cellLimit = 4;
+    int direct = Direction.NORTH; 
+    int cellLimit = 4; // limits how many times a vacuum can visit a cell, attempt to keep the number of moves and turns low
     
+    // constants for the vacuum to "think" what's around it
     int up = map[X-1][Y];
     int right = map[X][Y+1];
     int down = map[X+1][Y];
@@ -48,14 +49,16 @@ public class VacAgent extends Agent {
         // System.out.println("X: " + X);
         // System.out.println("Y: " + Y);
 
-        int up = map[X-1][Y];
-        int right = map[X][Y+1];
-        int down = map[X+1][Y];
-        int left = map[X][Y-1];
-        min = Math.min(up, Math.min(right, Math.min(down, left)));
+        up = map[X-1][Y];
+        right = map[X][Y+1];
+        down = map[X+1][Y];
+        left = map[X][Y-1];
 
-        System.out.println("Up: " + up + " right: " + right + " down: " + down + " left " + left);
-        System.out.println("min: " + min);
+        
+        // min = Math.min(up, Math.min(right, Math.min(down, left))); 
+
+        // System.out.println("Up: " + up + " right: " + right + " down: " + down + " left " + left);
+        // System.out.println("min: " + min);
 
         if(agent.seeObstacle()){
             seeObst = agent.seeObstacle();
@@ -190,6 +193,9 @@ public class VacAgent extends Agent {
         return "myw219";
     }
 
+    /* Attempts to check what the vacuum thinks what the surrounds is and based its decision on that.
+     * If it thinks that there is a square that it hasn't visited when it will turn to it and see what is there. 
+     */
     public Action checkSurround(int[][] map){
         Action decision = new GoForward();
         // int up = map[X-1][Y];
@@ -267,6 +273,9 @@ public class VacAgent extends Agent {
 
         switch(direct){
             case Direction.NORTH:
+                /* thinks that the left and right sides are the same but less than what's in front of it
+                 * then it randomly picks a side to turn to since both sides are the same
+                */
                 if(left==right && left<up){
                     if(prob==1){
                         decision = new TurnRight();
@@ -278,11 +287,13 @@ public class VacAgent extends Agent {
                     }
                 } else if(left>right){
                     if(right<up){
+                        // thinks that it hasn't been to the right side and it could be less than the front
                         decision = new TurnRight();
                         direct = Direction.EAST;
                     }
                 } else if(left<right){
                     if(left<up){
+                        // thinks that the left side hasn't been visited compared to the right side and hasn't visited compared to the front
                         decision = new TurnLeft();
                         direct = Direction.WEST;
                     }
@@ -290,6 +301,7 @@ public class VacAgent extends Agent {
                     decision = new GoForward();
                 }
                 break;
+            //same with the previous case but the machine is facing east
             case Direction.EAST:
                 if(up==down && up<right){
                     if(prob==1){
@@ -362,7 +374,10 @@ public class VacAgent extends Agent {
         return decision;
     }
 
-    // seed 166 fails
+    /* This function handles the fact that the vacuum sees an obstical
+     * If it sees an obstical, it checks what it thinks is on the right and left side of it and turns to what it thinks it has been/seen
+     * If it thinks that it hasn't been to either side, it'll randomly pick where it turns to
+     */
     public Action seeObject(int[][] map){
         Action decision;
         int up = map[X-1][Y];
