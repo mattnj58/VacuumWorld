@@ -3,6 +3,7 @@ package myw219;
 import agent.*;
 import vacworld.*;
 
+import java.net.NoRouteToHostException;
 import java.util.Random;
 
 public class VacAgent extends Agent {
@@ -26,6 +27,7 @@ public class VacAgent extends Agent {
     int right = map[X][Y+1];
     int down = map[X+1][Y];
     int left = map[X][Y-1];
+    int min = 0;
 
     // VacuumState state = new VacuumState(map);
 
@@ -50,7 +52,10 @@ public class VacAgent extends Agent {
         int right = map[X][Y+1];
         int down = map[X+1][Y];
         int left = map[X][Y-1];
-        int min = Math.min(up, Math.min(right, Math.min(down, left)));
+        min = Math.min(up, Math.min(right, Math.min(down, left)));
+
+        System.out.println("Up: " + up + " right: " + right + " down: " + down + " left " + left);
+        System.out.println("min: " + min);
 
         if(agent.seeObstacle()){
             seeObst = agent.seeObstacle();
@@ -143,7 +148,7 @@ public class VacAgent extends Agent {
 
             Action explore = checkSurround(map);
 
-            System.out.println(explore.toString());
+            // System.out.println("Explore " + explore.toString());
 
             // switch(direct){
             //     case Direction.NORTH:
@@ -185,7 +190,6 @@ public class VacAgent extends Agent {
         return "myw219";
     }
 
-    /*  */
     public Action checkSurround(int[][] map){
         Action decision = new GoForward();
         // int up = map[X-1][Y];
@@ -196,6 +200,71 @@ public class VacAgent extends Agent {
         Random rand = new Random();
         int prob = rand.nextInt(2);
 
+        // if(up == right && right == down && down == left && left == up){
+        //     decision = new GoForward();
+        // } else {
+        //     switch(direct){
+        //         case Direction.NORTH:
+        //             if(min == Direction.NORTH){
+        //                 decision = new GoForward();
+        //             } else if(min==Direction.EAST){
+        //                 decision = new TurnRight();
+        //                 direct = Direction.EAST;
+        //             } else if(min == Direction.SOUTH){
+        //                 decision = new TurnLeft();
+        //                 direct = Direction.WEST;
+        //             } else{
+        //                 decision = new TurnLeft();
+        //                 direct = Direction.WEST;
+        //             }
+        //         case Direction.EAST:
+        //             if(min == Direction.NORTH){
+        //                 decision = new TurnLeft();
+        //                 direct = Direction.NORTH;
+        //             } else if(min == Direction.EAST){
+        //                 decision = new GoForward();
+        //             } else if(min == Direction.SOUTH){
+        //                 decision = new TurnRight();
+        //                 direct = Direction.SOUTH;
+        //             } else {
+        //                 decision = new TurnRight();
+        //                 direct = Direction.SOUTH;
+        //             }
+        //             break;
+        //         case Direction.SOUTH:
+        //             if(min == Direction.NORTH){
+        //                 decision = new TurnLeft();
+        //                 direct = Direction.NORTH;
+        //             } else if(min == Direction.EAST){
+        //                 decision = new TurnLeft();
+        //                 direct = Direction.EAST;
+        //             } else if(min == Direction.SOUTH){
+        //                 decision = new GoForward();
+        //             } else {
+        //                 decision = new TurnRight();
+        //                 direct = Direction.WEST;
+        //             }
+        //             break;
+        //         default:
+        //             if(min == Direction.NORTH){
+        //                 decision = new TurnRight();
+        //                 direct = Direction.NORTH;
+        //             } else if(min == Direction.EAST){
+        //                 decision = new TurnRight();
+        //                 direct = Direction.NORTH;
+        //             } else if(min == Direction.SOUTH){
+        //                 decision = new TurnLeft();
+        //                 direct = Direction.SOUTH;
+        //             } else {
+        //                 decision = new GoForward();
+        //             }
+        //     }
+        // }
+
+        // System.out.println("Check Surroundings: " + decision.toString());
+
+        // return decision;
+
         switch(direct){
             case Direction.NORTH:
                 if(left==right && left<up){
@@ -203,6 +272,7 @@ public class VacAgent extends Agent {
                         decision = new TurnRight();
                         direct = Direction.EAST;
                     } else {
+                        System.out.println("left turn");
                         decision = new TurnLeft();
                         direct = Direction.WEST;
                     }
@@ -254,13 +324,13 @@ public class VacAgent extends Agent {
                     }
                 } else if(left>right){
                     if(right<down){
-                        decision = new TurnRight();
-                        direct = Direction.WEST;
+                        decision = new TurnLeft();
+                        direct = Direction.EAST;
                     }
                 } else if(left<right){
                     if(left<down){
-                        decision = new TurnLeft();
-                        direct = Direction.EAST;
+                        decision = new TurnRight();
+                        direct = Direction.WEST;
                     }
                 } else {
                     decision = new GoForward();
